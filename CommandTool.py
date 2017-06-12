@@ -14,7 +14,7 @@ def getPIDFormAppName(appName):
 
 
 def getPID(record):
-    return str.split(record, ' ')[0]
+    return str.split(record.strip(), ' ')[0]
 
 
 def killCPUThrottles():
@@ -22,6 +22,13 @@ def killCPUThrottles():
     for line in lines:
         pid = getPID(line)
         os.popen("kill %s" % pid)
+
+def killLimitSelf():
+    lines = os.popen("ps -axo 'pid, command' | grep 'Limit' | grep -v 'grep' | grep -v 'unLimit'").readlines()
+    for line in lines:
+        if line.find("sudo") != -1:
+            pid = getPID(line)
+            os.popen("kill %s" % pid)
 
 
 def checkCPUThrottles(pid):
